@@ -20,7 +20,7 @@ mkdir -p logs
 # Input configuration
 # =============================================================================
 
-SPEI_DIR="${HOME}/spei_r_outputs"
+SPEI_DIR="${HOME}/spei_r_outputs_penman_1850_2015"
 OUT_DIR="${HOME}/drought_catalog"
 SCRIPTS_DIR="${HOME}/drought-evaluation"
 PYTHON="${HOME}/drought-pipeline/bin/python"
