@@ -37,8 +37,11 @@ import matplotlib.dates as mdates
 import numpy as np
 import pandas as pd
 import xarray as xr
+import os
 
 try:
+    import cartopy
+    cartopy.config["data_dir"] = os.path.join(os.environ["HOME"], "cartopy_data")
     import cartopy.crs as ccrs
     import cartopy.feature as cfeature
     HAS_CARTOPY = True
