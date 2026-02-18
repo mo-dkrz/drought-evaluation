@@ -13,6 +13,10 @@ cd drought-evaluation
 module load anaconda
 conda create --prefix $HOME/drought-pipeline -c conda-forge python numpy pandas xarray netcdf4 matplotlib cartopy dask -y
 conda activate $HOME/drought-pipeline
+
+DATA_DIR="$HOME/cartopy_data"
+mkdir -p "$DATA_DIR"
+$HOME/drought-pipeline/bin/cartopy_feature_download gshhs physical cultural cultural-extra -o "$DATA_DIR" --no-warn --ignore-repo-data
 ```
 
 
