@@ -11,8 +11,8 @@ Install dependencies with conda or pip:
 git clone https://github.com/mo-dkrz/drought-evaluation.git
 cd drought-evaluation
 module load anaconda
-conda create --prefix $HOME/drought-pipeline -c conda-forge python numpy pandas xarray netcdf4 matplotlib cartopy -y
-conda activate drought
+conda create --prefix $HOME/drought-pipeline -c conda-forge python numpy pandas xarray netcdf4 matplotlib cartopy dask -y
+conda activate $HOME/drought-pipeline
 ```
 
 
@@ -40,7 +40,7 @@ python diagnostics.py \
 Edit the paths at the top of `batch_drought.sh`:
 
 ```bash
-SPEI_DIR="${HOME}/spei_r_outputs"
+SPEI_DIR="${HOME}/spei_r_outputs_penman_1850_2015"
 OUT_DIR="${HOME}/drought_catalog"
 SCRIPTS_DIR="${HOME}/drought-evaluation"
 PYTHON="${HOME}/drought-pipeline/bin/python"
