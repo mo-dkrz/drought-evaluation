@@ -8,6 +8,8 @@ Detects and catalogs drought events from monthly SPEI output data (ISIMIP).
 Install dependencies with conda or pip:
 
 ```bash
+git clone https://github.com/mo-dkrz/drought-evaluation.git
+cd drought-evaluation
 module load anaconda
 conda create --prefix $HOME/drought-pipeline -c conda-forge python numpy pandas xarray netcdf4 matplotlib cartopy -y
 conda activate drought
