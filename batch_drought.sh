@@ -22,7 +22,7 @@ mkdir -p logs
 
 SPEI_DIR="${HOME}/spei_r_outputs"
 OUT_DIR="${HOME}/drought_catalog"
-SCRIPTS_DIR="${HOME}/scripts"
+SCRIPTS_DIR="${HOME}/drought-evaluation"
 PYTHON="${HOME}/drought-pipeline/bin/python"
 
 BASELINE_START="1979-01-01"
@@ -43,6 +43,7 @@ LOCATIONS=(
 # =============================================================================
 # MAP TASK ID -> model / scenario
 # =============================================================================
+mkdir -p $OUT_DIR
 
 MODELS=("gfdl-esm4" "ukesm1-0-ll" "mpi-esm1-2-hr" "ipsl-cm6a-lr" "mri-esm2-0")
 SCENARIOS=("ssp126" "ssp370" "ssp585")

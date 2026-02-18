@@ -40,7 +40,7 @@ Edit the paths at the top of `batch_drought.sh`:
 ```bash
 SPEI_DIR="${HOME}/spei_r_outputs"
 OUT_DIR="${HOME}/drought_catalog"
-SCRIPTS_DIR="${HOME}/scripts"
+SCRIPTS_DIR="${HOME}/drought-evaluation"
 PYTHON="${HOME}/drought-pipeline/bin/python"
 ```
 
