@@ -147,6 +147,7 @@ def process_cell(df_cell: pd.DataFrame, slices: dict,
             result[f"lambda_{var}_{sl_name}"]  = lam
             result[f"n_events_{var}_{sl_name}"]= n_events
             result[f"ks_pval_{var}_{sl_name}"] = fit["ks_pval"]
+            result[f"ks_stat_{var}_{sl_name}"] = fit["ks_stat"]
             result[f"rp_quantiles_{var}_{sl_name}"] = np.array(
                 [fit["rp_quantiles"].get(rp, np.nan) for rp in return_periods],
                 dtype=np.float32)
@@ -183,6 +184,26 @@ def process_cell(df_cell: pd.DataFrame, slices: dict,
         result[f"delta_lambda_{var}_abs"] = dl
         result[f"delta_lambda_{var}_rel"] = (dl / lam_h * 100
                                               if np.isfinite(dl) and lam_h > 0 else np.nan)
+
+        # Quality flags per slice: 2=reliable, 1=caution, 0=unreliable
+        for sl in fits:
+            f   = fits[sl]
+            n   = f["n"]
+            ksp = f.get("ks_pval", np.nan)
+            if not f["converged"] or n < MIN_EVENTS:
+                q = 0
+            elif n >= 20 and np.isfinite(ksp) and ksp > 0.05:
+                q = 2
+            else:
+                q = 1
+            result[f"quality_{var}_{sl}"] = q
+
+        # Extrapolation flag per RP: 1 if RP exceeds observed sample in either slice
+        for rp in return_periods:
+            n_h = fits.get("hist", {}).get("n", 0)
+            n_f = fits.get("far",  {}).get("n", 0)
+            result[f"extrapolation_{var}_{rp}"] = int(rp > n_h or rp > n_f)
+
     return result
 
 
@@ -213,6 +234,7 @@ def build_output_dataset(all_results: list, lats: np.ndarray, lons: np.ndarray,
                 (f"lambda_{var}_{sl}",   f"Annual event rate λ ({var}, {sl})"),
                 (f"n_events_{var}_{sl}", f"Event count ({var}, {sl})"),
                 (f"ks_pval_{var}_{sl}",  f"KS p-value ({var}, {sl})"),
+                (f"ks_stat_{var}_{sl}",  f"KS statistic ({var}, {sl})"),
             ]:
                 arr = np.array([r.get(scalar_key, np.nan) for r in all_results],
                                dtype=np.float32)
@@ -246,6 +268,23 @@ def build_output_dataset(all_results: list, lats: np.ndarray, lons: np.ndarray,
             arr = np.array([r.get(mkey, np.nan) for r in all_results],
                            dtype=np.float32)
             data_vars[mkey] = (["cell"], arr, {"long_name": lname})
+
+        # Quality flags (2=reliable, 1=caution, 0=unreliable)
+        for sl in slices:
+            mkey = f"quality_{var}_{sl}"
+            arr  = np.array([r.get(mkey, 0) for r in all_results], dtype=np.int8)
+            data_vars[mkey] = (["cell"], arr, {
+                "long_name":  f"GPD fit quality ({var}, {sl})",
+                "flag_values": "0 1 2",
+                "flag_meanings": "unreliable caution reliable"})
+
+        # Extrapolation flags per RP (1=extrapolation, 0=within sample)
+        for rp in return_periods:
+            mkey = f"extrapolation_{var}_{rp}"
+            arr  = np.array([r.get(mkey, 1) for r in all_results], dtype=np.int8)
+            data_vars[mkey] = (["cell"], arr, {
+                "long_name": f"Extrapolation flag at RP={rp} ({var})",
+                "comment":   "1 = RP exceeds observed sample size in hist or far"})
 
     ds = xr.Dataset(
         data_vars=data_vars,
