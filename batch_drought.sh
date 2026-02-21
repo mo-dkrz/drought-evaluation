@@ -31,6 +31,11 @@ PERCENTILE="0.05"
 SPELL_REF="-0.4"
 ZOOM_START="1980-01-01"
 ZOOM_END="2014-12-31"
+HIST_START="1950-01-01"
+HIST_END="2014-12-31"
+FAR_START="2036-01-01"
+FAR_END="2100-12-31"
+RETURN_PERIODS="2,5,10,20,50,100"
 LOCATIONS=(
     "Atlanta:33.7:-84.4"
     "Lawrence:39.0:-95.2"
@@ -140,6 +145,24 @@ ${PYTHON} ${SCRIPTS_DIR}/diagnostics.py \
   --zoom-end       ${ZOOM_END} \
   --locations      "${LOCATIONS[@]}"
 
+
+echo ""
+echo "--- Step 4: Return periods (all grid cells) ---"
+RP_OUT="${OUT_DIR}/return_periods_${MODEL}_${SCENARIO}.nc"
+if [ -f "${RP_OUT}" ]; then
+    echo "Already exists: ${RP_OUT} — skipping."
+else
+    ${PYTHON} ${SCRIPTS_DIR}/compute_return_periods.py \
+      --model          ${MODEL} \
+      --ssp            ${SCENARIO} \
+      --catalog-dir    ${OUT_DIR} \
+      --out-dir        ${OUT_DIR} \
+      --return-periods ${RETURN_PERIODS} \
+      --hist-start     ${HIST_START} \
+      --hist-end       ${HIST_END} \
+      --far-start      ${FAR_START} \
+      --far-end        ${FAR_END}
+fi
 
 echo ""
 echo "======================================"
