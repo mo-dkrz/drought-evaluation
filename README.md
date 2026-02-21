@@ -37,6 +37,12 @@ python diagnostics.py \
     --model gfdl-esm4 --ssp ssp126 \
     --input-dir ~/spei_r_outputs \
     --out-dir   ~/drought_catalog
+
+python compute_return_periods.py \
+  --model       gfdl-esm4 \
+  --ssp         ssp126 \
+  --catalog-dir ~/drought_catalog \
+  --out-dir     ~/drought_catalog/return_periods
 ```
 
 ## Running on the HPC (all 15 model/scenario combinations)
