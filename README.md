@@ -11,7 +11,7 @@ Install dependencies with conda or pip:
 git clone https://github.com/mo-dkrz/drought-evaluation.git
 cd drought-evaluation
 module load anaconda
-conda create --prefix $HOME/drought-pipeline -c conda-forge python scipy numpy pandas xarray netcdf4 matplotlib cartopy dask pymannkendall -y
+conda create --prefix $HOME/drought-pipeline -c conda-forge python scipy numpy pandas xarray netcdf4 matplotlib cartopy dask tqdm pymannkendall -y
 conda activate $HOME/drought-pipeline
 
 DATA_DIR="$HOME/cartopy_data"
