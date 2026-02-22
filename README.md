@@ -11,7 +11,7 @@ Install dependencies with conda or pip:
 git clone https://github.com/mo-dkrz/drought-evaluation.git
 cd drought-evaluation
 module load anaconda
-conda create --prefix $HOME/drought-pipeline -c conda-forge python scipy numpy pandas xarray netcdf4 matplotlib cartopy dask -y
+conda create --prefix $HOME/drought-pipeline -c conda-forge python scipy numpy pandas xarray netcdf4 matplotlib cartopy dask pymannkendall -y
 conda activate $HOME/drought-pipeline
 
 DATA_DIR="$HOME/cartopy_data"
@@ -42,7 +42,13 @@ python compute_return_periods.py \
   --model       gfdl-esm4 \
   --ssp         ssp126 \
   --catalog-dir ~/drought_catalog \
-  --out-dir     ~/drought_catalog/return_periods
+  --out-dir     ~/drought_catalog
+
+python compute_mk_trends.py \
+  --model     gfdl-esm4 \
+  --ssp       ssp126 \
+  --input-dir ~/spei_r_outputs \
+  --out-dir   ~/drought_catalog
 ```
 
 ## Running on the HPC (all 15 model/scenario combinations)
@@ -56,13 +62,14 @@ SCRIPTS_DIR="${HOME}/drought-evaluation"
 PYTHON="${HOME}/drought-pipeline/bin/python"
 ```
 
-Then submit:
+Submit the main array job, then the ensemble job with a SLURM dependency
+so it only starts once all 15 tasks are finished:
 
 ```bash
-sbatch batch_drought.sh
+JID=$(sbatch --parsable batch_drought.sh)
+sbatch --dependency=afterok:${JID} batch_mk_ensemble.sh
 
 # Monitor
 squeue -u $USER
 tail -f logs/drought_<jobid>_0.log
 ```
-

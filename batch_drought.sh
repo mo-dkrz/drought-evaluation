@@ -165,6 +165,19 @@ else
 fi
 
 echo ""
+echo "--- Step 5: MK trend analysis (ISIMIP3b windows, all grid cells) ---"
+MK_OUT="${OUT_DIR}/mk_trends_${MODEL}_${SCENARIO}.nc"
+if [ -f "${MK_OUT}" ]; then
+    echo "Already exists: ${MK_OUT} — skipping."
+else
+    ${PYTHON} ${SCRIPTS_DIR}/compute_mk_trends.py \
+      --model     ${MODEL} \
+      --ssp       ${SCENARIO} \
+      --input-dir ${SPEI_DIR} \
+      --out-dir   ${OUT_DIR}
+fi
+
+echo ""
 echo "======================================"
 echo "Done: ${MODEL} / ${SCENARIO}  at $(date)"
 echo "======================================"
